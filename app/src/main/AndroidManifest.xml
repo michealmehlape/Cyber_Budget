@@ -11,15 +11,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Cyber_Budget">
+
         <activity
-            android:name=".MainActivity"
+            android:name=".Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".login" android:exported="false" />
+        <activity android:name=".register" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".AddTransactionActivity" android:exported="false" />
+        <activity android:name=".TransactionsActivity" android:exported="false" />
+        <activity android:name=".SummaryActivity" android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".AddCategoryActivity" android:exported="false" />
+        <activity android:name=".UserProfileActivity" android:exported="false" />
+        <activity android:name=".SecurityActivity" android:exported="false" />
+        <activity android:name=".NotificationsActivity" android:exported="false" />
+
     </application>
 
 </manifest>
