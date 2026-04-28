@@ -3,7 +3,9 @@ package com.example.cyber_budget
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import java.io.File
 
 class TransactionsActivity : AppCompatActivity() {
 
@@ -38,7 +41,7 @@ class TransactionsActivity : AppCompatActivity() {
 
         rvTransactions = findViewById(R.id.rv_transactions)
         rvTransactions.layoutManager = LinearLayoutManager(this)
-        rvTransactions.adapter = TransactionAdapter(emptyList()) {}
+        rvTransactions.adapter = TransactionAdapter(emptyList(), {})
 
         setupNavbar()
         loadTransactions()
@@ -73,19 +76,55 @@ class TransactionsActivity : AppCompatActivity() {
             
             expenses.forEach { e ->
                 val catName = categories.find { it.id == e.categoryId }?.name ?: "Unknown"
-                uiList.add(TransactionUI(e.id, e.description, catName, e.amount, e.date, e.startTime, false))
+                uiList.add(TransactionUI(
+                    id = e.id,
+                    description = e.description,
+                    categoryName = catName,
+                    amount = e.amount,
+                    date = e.date,
+                    time = e.startTime,
+                    isIncome = false,
+                    hasPhoto = e.photoPath != null,
+                    photoPath = e.photoPath
+                ))
             }
             
             income.forEach { i ->
-                uiList.add(TransactionUI(i.id, i.source, "Income", i.amount, i.date, "", true))
+                uiList.add(TransactionUI(
+                    id = i.id,
+                    description = i.source,
+                    categoryName = "Income",
+                    amount = i.amount,
+                    date = i.date,
+                    time = "",
+                    isIncome = true
+                ))
             }
 
             val sortedList = uiList.sortedByDescending { it.date }
             
-            rvTransactions.adapter = TransactionAdapter(sortedList) { transaction ->
-                showDeleteConfirmation(transaction)
-            }
+            rvTransactions.adapter = TransactionAdapter(sortedList, 
+                onDeleteClick = { transaction -> showDeleteConfirmation(transaction) },
+                onViewPhotoClick = { path -> showPhotoDialog(path) }
+            )
         }
+    }
+
+    private fun showPhotoDialog(path: String) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_view_photo, null)
+        val imageView = dialogView.findViewById<ImageView>(R.id.iv_full_photo)
+        val file = File(path)
+        if (file.exists()) {
+            imageView.setImageURI(Uri.fromFile(file))
+        } else {
+            Toast.makeText(this, "Photo not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("Close", null)
+            .show()
     }
 
     private fun showDeleteConfirmation(transaction: TransactionUI) {
@@ -100,7 +139,12 @@ class TransactionsActivity : AppCompatActivity() {
                         if (income != null) db.incomeEntryDao().deleteIncome(income)
                     } else {
                         val expense = db.expenseEntryDao().getExpenseById(transaction.id)
-                        if (expense != null) db.expenseEntryDao().deleteExpense(expense)
+                        if (expense != null) {
+                            expense.photoPath?.let { path ->
+                                File(path).delete()
+                            }
+                            db.expenseEntryDao().deleteExpense(expense)
+                        }
                     }
                     Toast.makeText(this@TransactionsActivity, "Deleted", Toast.LENGTH_SHORT).show()
                     loadTransactions() // Refresh

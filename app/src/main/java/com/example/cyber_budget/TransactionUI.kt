@@ -7,5 +7,7 @@ data class TransactionUI(
     val amount: Double,
     val date: String,
     val time: String,
-    val isIncome: Boolean
+    val isIncome: Boolean,
+    val hasPhoto: Boolean = false,
+    val photoPath: String? = null
 )

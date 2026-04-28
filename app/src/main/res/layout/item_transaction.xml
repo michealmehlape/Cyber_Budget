@@ -70,6 +70,17 @@
                 android:textSize="10sp" />
         </LinearLayout>
 
+        <!-- View Photo Button -->
+        <ImageView
+            android:id="@+id/btn_view_photo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:padding="4dp"
+            android:src="@android:drawable/ic_menu_camera"
+            android:visibility="gone"
+            app:tint="#3450A1" />
+
         <ImageView
             android:id="@+id/btn_delete"
             android:layout_width="32dp"

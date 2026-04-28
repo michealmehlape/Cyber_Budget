@@ -11,7 +11,8 @@ import java.util.*
 
 class TransactionAdapter(
     private val transactions: List<TransactionUI>,
-    private val onDeleteClick: (TransactionUI) -> Unit
+    private val onDeleteClick: (TransactionUI) -> Unit,
+    private val onViewPhotoClick: (String) -> Unit = {}
 ) : RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -21,6 +22,7 @@ class TransactionAdapter(
         val tvTime: TextView = view.findViewById(R.id.tv_transaction_time)
         val ivIcon: ImageView = view.findViewById(R.id.iv_category_icon)
         val btnDelete: ImageView = view.findViewById(R.id.btn_delete)
+        val btnViewPhoto: ImageView? = view.findViewById(R.id.btn_view_photo)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,6 +43,15 @@ class TransactionAdapter(
         } else {
             holder.tvAmount.text = "-R ${String.format(Locale.US, "%.2f", transaction.amount)}"
             holder.tvAmount.setTextColor(Color.parseColor("#F44336")) // Red
+        }
+
+        if (transaction.hasPhoto && transaction.photoPath != null) {
+            holder.btnViewPhoto?.visibility = View.VISIBLE
+            holder.btnViewPhoto?.setOnClickListener {
+                onViewPhotoClick(transaction.photoPath)
+            }
+        } else {
+            holder.btnViewPhoto?.visibility = View.GONE
         }
 
         holder.btnDelete.setOnClickListener {

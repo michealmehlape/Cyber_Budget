@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -15,9 +17,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Main Dashboard Activity: Displays the user's total balance, remaining budget,
+ * and recent transaction activity.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
@@ -106,10 +113,28 @@ class MainActivity : AppCompatActivity() {
             val uiList = mutableListOf<TransactionUI>()
             recentExpenses.forEach { e ->
                 val catName = categories.find { it.id == e.categoryId }?.name ?: "Unknown"
-                uiList.add(TransactionUI(e.id, e.description, catName, e.amount, e.date, e.startTime, false))
+                uiList.add(TransactionUI(
+                    id = e.id,
+                    description = e.description,
+                    categoryName = catName,
+                    amount = e.amount,
+                    date = e.date,
+                    time = e.startTime,
+                    isIncome = false,
+                    hasPhoto = e.photoPath != null,
+                    photoPath = e.photoPath
+                ))
             }
             recentIncome.forEach { i ->
-                uiList.add(TransactionUI(i.id, i.source, "Income", i.amount, i.date, "", true))
+                uiList.add(TransactionUI(
+                    id = i.id,
+                    description = i.source,
+                    categoryName = "Income",
+                    amount = i.amount,
+                    date = i.date,
+                    time = "",
+                    isIncome = true
+                ))
             }
             val dashboardList = uiList.sortedByDescending { it.date }.take(3)
 
@@ -135,9 +160,11 @@ class MainActivity : AppCompatActivity() {
                 tvMonthlyChange.setTextColor(Color.LTGRAY)
             }
 
-            rvRecent.adapter = TransactionAdapter(dashboardList) { transaction ->
-                showDeleteConfirmation(transaction, userId)
-            }
+            rvRecent.adapter = TransactionAdapter(
+                transactions = dashboardList,
+                onDeleteClick = { transaction -> showDeleteConfirmation(transaction, userId) },
+                onViewPhotoClick = { path -> showPhotoDialog(path) }
+            )
 
             // Spending Summary logic updated to use sum of Category Budgets
             findViewById<TextView>(R.id.tv_spending_summary).text = "R ${String.format(Locale.US, "%.0f", totalExpenses)} / R ${String.format(Locale.US, "%.0f", displayGoal)}"
@@ -145,6 +172,23 @@ class MainActivity : AppCompatActivity() {
             
             findViewById<TextView>(R.id.tv_income_summary).text = "R ${String.format(Locale.US, "%.0f", totalIncome)}"
         }
+    }
+
+    private fun showPhotoDialog(path: String) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_view_photo, null)
+        val imageView = dialogView.findViewById<ImageView>(R.id.iv_full_photo)
+        val file = File(path)
+        if (file.exists()) {
+            imageView.setImageURI(Uri.fromFile(file))
+        } else {
+            Toast.makeText(this, "Photo not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("Close", null)
+            .show()
     }
 
     private fun showDeleteConfirmation(transaction: TransactionUI, userId: Int) {
@@ -159,7 +203,12 @@ class MainActivity : AppCompatActivity() {
                         if (item != null) db.incomeEntryDao().deleteIncome(item)
                     } else {
                         val item = db.expenseEntryDao().getExpenseById(transaction.id)
-                        if (item != null) db.expenseEntryDao().deleteExpense(item)
+                        if (item != null) {
+                            item.photoPath?.let { path ->
+                                File(path).delete()
+                            }
+                            db.expenseEntryDao().deleteExpense(item)
+                        }
                     }
                     updateDashboard(userId) // Refresh
                 }
