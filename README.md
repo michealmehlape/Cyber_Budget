@@ -8,16 +8,14 @@ The app is tailored for South African users, considering local economic challeng
 
 
 Features
-- User registration and secure authentication (2FA & biometrics)
+- User registration and secure authentication (biometrics)
 - Expense tracking and categorization
 - Budget creation and goal setting
-- AI-powered financial insights and analytics
 - Smart notifications and alerts
-- Gamification (badges & rewards)
 - Secure cloud storage with encryption
 
  System Overview
-- Platform: Android, iOS, Web
+- Platform: Android
 - Target Users: Individuals managing personal finances
 - Focus: Financial awareness and smart budgeting
 
@@ -29,18 +27,9 @@ Features
 - Settings & Security
 
 
-
- Technologies Used
-- C# / .NET (if you're using it later)
-- WPF / XAML (for desktop version)
-- AI concepts for analytics
-- Cloud storage integration
-
  Security Features
 - End-to-end encryption
 - Biometric login (fingerprint/face ID)
-- Two-factor authentication (2FA)
-
 
 
  Development Plan
