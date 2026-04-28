@@ -12,7 +12,6 @@ Features
 - Expense tracking and categorization
 - Budget creation and goal setting
 - Smart notifications and alerts
-- Secure cloud storage with encryption
 
  System Overview
 - Platform: Android
