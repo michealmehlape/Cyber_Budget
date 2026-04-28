@@ -61,7 +61,7 @@ To empower South Africans to take control of their finances through a simple, se
 
 youtube link
 - https://youtu.be/DFEmtJv8Gmk?si=UsoCJOCGU7HeOURO
-  murendeni
+  
 
 
 
