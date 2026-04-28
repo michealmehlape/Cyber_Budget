@@ -12,6 +12,6 @@ data class ExpenseEntry(
     val startTime: String,    // "HH:mm"
     val endTime: String,      // "HH:mm"
     val description: String,
-    val amount: Double,       // ← ADD THIS
+    val amount: Double,
     val photoPath: String? = null
 )
