@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,29 +22,49 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Activity for adding new financial transactions.
+ * Features:
+ * - Date and Time selection using native Android pickers.
+ * - Category management integration.
+ * - Receipt capture using system camera.
+ * - Runtime permission handling for security compliance.
+ * 
+ * References:
+ * - Camera Intent: https://developer.android.com/training/camera/videocapture
+ * - Runtime Permissions: https://developer.android.com/training/permissions/requesting
+ */
 class AddTransactionActivity : AppCompatActivity() {
 
+    private val TAG = "AddTransaction_Debug"
     private lateinit var db: AppDatabase
     private var userId: Int = -1
     private val calendar = Calendar.getInstance()
     private lateinit var ivPreview: ImageView
     private var capturedImage: Bitmap? = null
 
+    // Launcher for taking a picture. Uses ActivityResultContracts for modern intent handling.
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val imageBitmap = result.data?.extras?.get("data") as? Bitmap
             imageBitmap?.let {
+                Log.d(TAG, "Receipt photo captured successfully")
                 capturedImage = it
                 ivPreview.setImageBitmap(it)
                 ivPreview.visibility = View.VISIBLE
             }
+        } else {
+            Log.w(TAG, "Camera capture cancelled or failed")
         }
     }
 
+    // Launcher for requesting camera permission dynamically at runtime.
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
+            Log.i(TAG, "Camera permission granted by user")
             launchCamera()
         } else {
+            Log.e(TAG, "Camera permission denied")
             Toast.makeText(this, "Camera permission is required to capture receipts", Toast.LENGTH_SHORT).show()
         }
     }
@@ -51,6 +72,7 @@ class AddTransactionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_transaction)
+        Log.d(TAG, "onCreate: View initialized")
 
         db = AppDatabase.getDatabase(this)
         HeaderHelper.setupHeader(this, db)
@@ -89,10 +111,15 @@ class AddTransactionActivity : AppCompatActivity() {
         setupNavbar()
     }
 
+    /**
+     * Logic to handle the 'Take Photo' action. Verifies permissions first.
+     */
     private fun handleCameraAction() {
+        Log.v(TAG, "handleCameraAction triggered")
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             launchCamera()
         } else {
+            Log.i(TAG, "Requesting runtime camera permission")
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
@@ -102,10 +129,14 @@ class AddTransactionActivity : AppCompatActivity() {
         try {
             takePictureLauncher.launch(takePictureIntent)
         } catch (e: Exception) {
+            Log.e(TAG, "Error launching camera: ${e.message}")
             Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
         }
     }
 
+    /**
+     * Standard implementation of native Date and Time pickers for user input.
+     */
     private fun setupPickers(etDate: EditText, etStart: EditText, etEnd: EditText) {
         etDate.setOnClickListener {
             DatePickerDialog(this, { _, y, m, d ->
@@ -130,9 +161,14 @@ class AddTransactionActivity : AppCompatActivity() {
             val names = categories.map { it.name }
             val adapter = ArrayAdapter(this@AddTransactionActivity, android.R.layout.simple_spinner_dropdown_item, names)
             spinner.adapter = adapter
+            Log.d(TAG, "Loaded ${names.size} categories into spinner")
         }
     }
 
+    /**
+     * Orchestrates the saving of the transaction data.
+     * Persists receipt images to internal storage to maintain app performance.
+     */
     private fun saveTransaction(etAmount: EditText, etDesc: EditText, etDate: EditText, etStart: EditText, etEnd: EditText, spinner: Spinner, rgType: RadioGroup) {
         val amount = etAmount.text.toString().toDoubleOrNull() ?: 0.0
         val desc = etDesc.text.toString()
@@ -147,6 +183,7 @@ class AddTransactionActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 var photoPath: String? = null
                 capturedImage?.let {
+                    Log.i(TAG, "Persisting bitmap to internal storage directory")
                     photoPath = saveImageToInternalStorage(it)
                 }
 
@@ -158,7 +195,7 @@ class AddTransactionActivity : AppCompatActivity() {
                         date = date
                     )
                     db.incomeEntryDao().insertIncome(income)
-                    Toast.makeText(this@AddTransactionActivity, "Income Saved", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "Income entry stored successfully")
                 } else {
                     val category = db.categoryDao().getCategoriesForUser(userId).find { it.name == categoryName }
                     val expense = ExpenseEntry(
@@ -172,7 +209,7 @@ class AddTransactionActivity : AppCompatActivity() {
                         photoPath = photoPath
                     )
                     db.expenseEntryDao().insertExpense(expense)
-                    Toast.makeText(this@AddTransactionActivity, "Expense Saved", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "Expense entry stored successfully. Photo: ${photoPath != null}")
                 }
                 finish()
             }
@@ -181,12 +218,17 @@ class AddTransactionActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Saves captured photo to the application's private data folder.
+     * Reference: https://developer.android.com/training/data-storage/app-specific
+     */
     private fun saveImageToInternalStorage(bitmap: Bitmap): String {
         val filename = "receipt_${System.currentTimeMillis()}.jpg"
         val file = File(filesDir, filename)
         FileOutputStream(file).use { out ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
         }
+        Log.v(TAG, "Image saved at path: ${file.absolutePath}")
         return file.absolutePath
     }
 

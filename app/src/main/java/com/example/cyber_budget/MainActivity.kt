@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         
         // --- CHECK SESSION VALIDITY ---
