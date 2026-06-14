@@ -1,40 +1,55 @@
-Cyber Budget Project Overview
+- Cyber Budget Project Overview
+- This application is a personal finance management tool used to monitor income and expenses.
+- It stores data in a cloud database to keep financial records synced across different devices.
+- The app helps users maintain a budget by providing visual feedback on spending categories and goals.
 
-- App Purpose
-- This application is a personal finance management tool designed to help users track their income and expenses through a cloud-synchronized platform.
-- It allows for detailed budgeting by category and provides real-time visual feedback on financial health and spending habits.
-- The system uses cloud storage to ensure data is accessible across devices while maintaining high security standards.
+- Features We Implemented
+- Income and expense tracking with details for amount, date, description, and category.
+- Cloud synchronization using Firebase Firestore for real-time data persistence.
+- Interactive donut pie chart on the dashboard displaying spending by category.
+- Percentage values displayed inside the chart slices and category names outside with connecting lines.
+- Custom category management where users can set names and permanent colors.
+- Budget goal setting for each category, including minimum and maximum spending limits.
+- Visual progress bars that track budget consumption and change color based on spending status.
+- Transaction history list for reviewing and managing past entries.
+- Image attachment support for saving photos of receipts with transactions.
+- Biometric security integration for fingerprint and facial recognition access.
+- Automatic session locking after 30 minutes of user inactivity.
+- Customizable budget cycles allowing users to set specific start dates for tracking.
+- Navigation system for switching between home, insights, activity, and profile sections.
 
-- Core Features
-- Expense and Income Tracking: Users can log every transaction with descriptions, amounts, dates, and categories.
-- Cloud Synchronization: All data is stored in Firebase Firestore, allowing for real-time updates and data persistence.
-- Dynamic Data Visualization: The dashboard includes a donut pie chart that displays spending distribution by category with percentage breakdowns.
-- Category Management: Users can create custom categories with unique names and permanent color coding for easy identification.
-- Budget Goal Setting: Each category can have a minimum and maximum spending goal to help maintain financial discipline.
-- Automated Progress Tracking: Visual progress bars show how much of a category budget has been consumed, with color changes when approaching or exceeding limits.
-- Daily Spending Intelligence: The Safe Today feature calculates a daily allowance based on the remaining budget and the days left in the current cycle.
-- Cycle over Cycle Comparison: The app analyzes spending patterns between the current and previous budget cycles to show financial trends.
-- Analytical Bar Charts: A detailed bar chart in the insights section compares spending across all active categories.
-- Smart Financial Insights: A logic engine provides text-based advice and summaries based on spending behavior and budget status.
+- Safe Zone Feature
+- The Safe Zone, also displayed as Safe Today, is a daily spending intelligence tool.
+- It calculates the total remaining budget by taking all category maximum goals and subtracting current expenses.
+- The remaining balance is divided by the number of days left in the current budget cycle.
+- It provides a specific daily allowance figure to show how much can be spent each day without exceeding the budget.
+- This feature breaks down long-term monthly goals into a single, manageable daily target.
 
-- Achievement Badges and How to Earn Them
-- Active Logger Badge: This is awarded to users who consistently track their finances. To unlock it, you must log at least 10 separate expense entries in the system.
-- Budget Pro Badge: This is an achievement for financial discipline. It is earned by completing a budget cycle without any of your spending categories exceeding their defined maximum goals.
-- Finance Guru Badge: This is for advanced budgeting. To earn this, you must keep at least three different spending categories within their goal ranges simultaneously during a single cycle without any overspending.
-- Saver Hero Badge: This is awarded for wealth building. It is unlocked when your total income for a specific budget cycle exceeds your total expenses for that same period.
+- AI Spending Analysis
+- The AI analysis uses a rule-based logic engine to evaluate financial behavior.
+- It compares the total spending of the current cycle with the total from the previous cycle.
+- The engine identifies which categories are over-budget or approaching their limits and provides specific alerts.
+- It generates human-readable summaries that explain spending trends in percentages.
+- The tool monitors logging frequency to ensure the user is maintaining consistent records.
+- It provides advice on how to adjust spending to align with the Safe Zone and overall financial goals.
 
-- Security Implementation
-- Biometric Authentication: The app supports fingerprint and face recognition login through the AndroidX Biometric library for secure access.
-- Secure Session Management: A global session guard is implemented to enforce an idle-lock if the app is not used for 30 minutes.
-- User Isolation: All data is strictly isolated using unique user identifiers and protected by server-side security rules to ensure privacy.
+- How to Get Badges
+- Active Logger: This is earned by logging at least 10 separate expense entries to demonstrate consistent tracking.
+- Budget Pro: This is awarded for completing a full budget cycle without any category exceeding its maximum spending limit.
+- Finance Guru: This is earned by keeping at least three different categories within their goal ranges simultaneously during a cycle.
+- Saver Hero: This is unlocked if the total income for a budget cycle is higher than the total expenses for that same period.
+
+- Security and Data Protection
+- User isolation is maintained by associating all data with unique identifiers in the database.
+- Biometric authentication is handled through the AndroidX Biometric library for secure logins.
+- Idle-lock security is enforced globally to protect sensitive financial data.
+- Server-side security rules prevent unauthorized access or modification of user records.
 
 - Technical Specifications
-- Built with Kotlin using modern Android development practices.
-- Backend services provided by Firebase Authentication and Cloud Firestore.
-- Data visualization powered by the MPAndroidChart library.
-- User interface follows modern Material Design standards for a clean and professional look.
+- Built using the Kotlin programming language and standard Android development tools.
+- Uses Firebase Authentication and Cloud Firestore for backend services.
+- Data visualization and charts are implemented using the MPAndroidChart library.
+- The interface is built with Material Design to ensure a consistent appearance.
 
-- Development Information
-- Architected and developed by Cybersquad(Micheal Mehlape, Murendeni Nethezheni, Advice Ngobene).
-- 
-- 
+- Development Team
+- Developed by Micheal Mehlape, Murendeni Nethezheni, and Advice Ngobene.
