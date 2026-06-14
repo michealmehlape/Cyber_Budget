@@ -1,58 +1,40 @@
-# Smart Budget: Architectural Refactor & Technical Specification
+Cyber Budget Project Overview
 
-Smart Budget is an Android-native financial management platform. This project represents a complete architectural transition from a localized SQLite (Room) persistence layer to a distributed, cloud-synchronized infrastructure powered by **Firebase**. The system is engineered for high-availability, hardware-level security, and efficient media processing.
+- App Purpose
+- This application is a personal finance management tool designed to help users track their income and expenses through a cloud-synchronized platform.
+- It allows for detailed budgeting by category and provides real-time visual feedback on financial health and spending habits.
+- The system uses cloud storage to ensure data is accessible across devices while maintaining high security standards.
 
----
+- Core Features
+- Expense and Income Tracking: Users can log every transaction with descriptions, amounts, dates, and categories.
+- Cloud Synchronization: All data is stored in Firebase Firestore, allowing for real-time updates and data persistence.
+- Dynamic Data Visualization: The dashboard includes a donut pie chart that displays spending distribution by category with percentage breakdowns.
+- Category Management: Users can create custom categories with unique names and permanent color coding for easy identification.
+- Budget Goal Setting: Each category can have a minimum and maximum spending goal to help maintain financial discipline.
+- Automated Progress Tracking: Visual progress bars show how much of a category budget has been consumed, with color changes when approaching or exceeding limits.
+- Daily Spending Intelligence: The Safe Today feature calculates a daily allowance based on the remaining budget and the days left in the current cycle.
+- Cycle over Cycle Comparison: The app analyzes spending patterns between the current and previous budget cycles to show financial trends.
+- Analytical Bar Charts: A detailed bar chart in the insights section compares spending across all active categories.
+- Smart Financial Insights: A logic engine provides text-based advice and summaries based on spending behavior and budget status.
 
-## ✨ Core Features & POE Requirements
+- Achievement Badges and How to Earn Them
+- Active Logger Badge: This is awarded to users who consistently track their finances. To unlock it, you must log at least 10 separate expense entries in the system.
+- Budget Pro Badge: This is an achievement for financial discipline. It is earned by completing a budget cycle without any of your spending categories exceeding their defined maximum goals.
+- Finance Guru Badge: This is for advanced budgeting. To earn this, you must keep at least three different spending categories within their goal ranges simultaneously during a single cycle without any overspending.
+- Saver Hero Badge: This is awarded for wealth building. It is unlocked when your total income for a specific budget cycle exceeds your total expenses for that same period.
 
-### 1. Advanced Data Visualization (Final POE)
-*   **Dynamic Category Graph:** A high-performance `HorizontalBarChart` (via MPAndroidChart) visualizes spending across all user-defined categories.
-*   **Goal Tracking:** The app now supports **Minimum and Maximum spending goals**. Progress bars are color-coded to provide instant visual feedback:
-    *   🔵 **Blue**: Under-spending (Below Min Goal)
-    *   🟢 **Green**: Healthy (Between Min and Max Goal)
-    *   🔴 **Red**: Over-budget (Exceeded Max Goal)
+- Security Implementation
+- Biometric Authentication: The app supports fingerprint and face recognition login through the AndroidX Biometric library for secure access.
+- Secure Session Management: A global session guard is implemented to enforce an idle-lock if the app is not used for 30 minutes.
+- User Isolation: All data is strictly isolated using unique user identifiers and protected by server-side security rules to ensure privacy.
 
-### 2. Gamification & Rewards
-To encourage financial discipline, the app includes a **Badges & Rewards system**:
-*   🏆 **Active Logger**: Awarded for consistent expense tracking.
-*   🏆 **Budget Pro**: Awarded for staying within your defined goal range.
-*   🏆 **Finance Guru**: Awarded for mastering budget discipline across multiple categories.
+- Technical Specifications
+- Built with Kotlin using modern Android development practices.
+- Backend services provided by Firebase Authentication and Cloud Firestore.
+- Data visualization powered by the MPAndroidChart library.
+- User interface follows modern Material Design standards for a clean and professional look.
 
----
-
-## 🌟 Exclusive "Own Features"
-
-### Feature A: The SAFE ZONE (Daily Spending Intelligence)
-The dashboard now features a real-time **SAFE ZONE** calculation. 
-*   **How it works:** It takes the user's remaining monthly budget and divides it by the days left in the month.
-*   **Value:** It gives the user a specific "Daily Allowance" (e.g., *R150.00 / day*). This makes complex budgeting feel simple and manageable.
-
-### Feature B: AI Spending Insights (Smart Analysis)
-A rule-based logic engine that analyzes spending patterns over time.
-*   **How it works:** The engine compares the current week's total spending against the previous week.
-*   **Value:** It provides human-readable advice (e.g., *"Your spending is up 15% this week. Try to stick to your Safe Zone!"*), moving the app from a simple ledger to a smart financial assistant.
-
----
-
-## 🏛 Technical Architecture
-
-### 1. Cloud Ingestion & Data Tenancy
-*   **Persistence:** Powered by **Cloud Firestore** for real-time synchronization.
-*   **Security:** Every transaction is isolated by Firebase `UID` and protected by server-side rules.
-
-### 2. Hardened Security Model
-*   **Biometrics:** Integration with **AndroidX Biometric** for Fingerprint/Face ID.
-*   **Session Guard:** 30-minute idle-lock enforced globally.
-
----
-
-## 🛠 Engineering Stack
-*   **Logic:** Kotlin (Coroutines & Structured Concurrency)
-*   **Backend:** Firebase Auth & Firestore
-*   **Charts:** MPAndroidChart
-*   **UI:** Material Design 3 (M3)
-
----
-
-**Developed and Architected by Micheal Mehlape**
+- Development Information
+- Architected and developed by Cybersquad(Micheal Mehlape, Murendeni Nethezheni, Advice Ngobene).
+- 
+- 
