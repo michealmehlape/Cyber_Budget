@@ -1,15 +1,14 @@
 package com.example.cyber_budget
 
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "users", indices = [Index(value = ["email"], unique = true)])
+/**
+ * Model representing a User profile.
+ * Updated to include persistent achievement badges.
+ */
 data class User(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val passwordHash: String  // store hashed passwords, not plain text
+    val firstName: String = "",
+    val lastName: String = "",
+    val email: String = "",
+    val biometricEnabled: Boolean = false,
+    val budgetCycleDay: Int = 1,
+    val earnedBadges: List<String> = emptyList()
 )

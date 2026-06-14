@@ -7,78 +7,86 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Activity for adding new financial transactions.
- * Features:
- * - Date and Time selection using native Android pickers.
- * - Category management integration.
- * - Receipt capture using system camera.
- * - Runtime permission handling for security compliance.
- * 
- * References:
- * - Camera Intent: https://developer.android.com/training/camera/videocapture
- * - Runtime Permissions: https://developer.android.com/training/permissions/requesting
+ * AddTransactionActivity: Standardized with the modern UI and real-time sync.
+ * Fixed: Camera error solved using FileProvider for high-resolution photo capture.
  */
 class AddTransactionActivity : AppCompatActivity() {
 
-    private val TAG = "AddTransaction_Debug"
-    private lateinit var db: AppDatabase
-    private var userId: Int = -1
+    private val TAG = "AddTransaction_Activity"
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
     private val calendar = Calendar.getInstance()
     private lateinit var ivPreview: ImageView
-    private var capturedImage: Bitmap? = null
+    private var photoFile: File? = null
 
-    // Launcher for taking a picture. Uses ActivityResultContracts for modern intent handling.
-    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
-            imageBitmap?.let {
-                Log.d(TAG, "Receipt photo captured successfully")
-                capturedImage = it
-                ivPreview.setImageBitmap(it)
+    // High-resolution photo capture launcher
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            photoFile?.let {
+                ivPreview.setImageURI(Uri.fromFile(it))
                 ivPreview.visibility = View.VISIBLE
             }
         } else {
-            Log.w(TAG, "Camera capture cancelled or failed")
+            photoFile = null
         }
     }
 
-    // Launcher for requesting camera permission dynamically at runtime.
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            Log.i(TAG, "Camera permission granted by user")
-            launchCamera()
-        } else {
-            Log.e(TAG, "Camera permission denied")
-            Toast.makeText(this, "Camera permission is required to capture receipts", Toast.LENGTH_SHORT).show()
-        }
+        if (isGranted) launchCamera()
+        else Toast.makeText(this, "Camera permission required", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, login::class.java))
+            finish()
+            return
+        }
+
+        enableEdgeToEdge()
         setContentView(R.layout.activity_add_transaction)
-        Log.d(TAG, "onCreate: View initialized")
+        HeaderHelper.setupHeader(this)
 
-        db = AppDatabase.getDatabase(this)
-        HeaderHelper.setupHeader(this, db)
-
-        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        userId = sharedPreferences.getInt("userId", -1)
+        val navContainer = findViewById<View>(R.id.include_nav)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            
+            navContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = navBars.bottom
+            }
+            insets
+        }
 
         val etAmount = findViewById<EditText>(R.id.et_amount)
         val etDescription = findViewById<EditText>(R.id.et_description)
@@ -99,10 +107,7 @@ class AddTransactionActivity : AppCompatActivity() {
         }
 
         loadCategories(spinner)
-
-        btnTakePhoto.setOnClickListener {
-            handleCameraAction()
-        }
+        btnTakePhoto.setOnClickListener { handleCameraAction() }
 
         btnSave.setOnClickListener {
             saveTransaction(etAmount, etDescription, etDate, etStart, etEnd, spinner, rgType)
@@ -111,32 +116,28 @@ class AddTransactionActivity : AppCompatActivity() {
         setupNavbar()
     }
 
-    /**
-     * Logic to handle the 'Take Photo' action. Verifies permissions first.
-     */
     private fun handleCameraAction() {
-        Log.v(TAG, "handleCameraAction triggered")
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             launchCamera()
         } else {
-            Log.i(TAG, "Requesting runtime camera permission")
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
     private fun launchCamera() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
-            takePictureLauncher.launch(takePictureIntent)
+            val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = File.createTempFile("receipt_${System.currentTimeMillis()}_", ".jpg", storageDir)
+            photoFile = file
+            
+            val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
+            takePictureLauncher.launch(uri)
         } catch (e: Exception) {
-            Log.e(TAG, "Error launching camera: ${e.message}")
-            Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "Error creating photo file", e)
+            Toast.makeText(this, "Error opening camera", Toast.LENGTH_SHORT).show()
         }
     }
 
-    /**
-     * Standard implementation of native Date and Time pickers for user input.
-     */
     private fun setupPickers(etDate: EditText, etStart: EditText, etEnd: EditText) {
         etDate.setOnClickListener {
             DatePickerDialog(this, { _, y, m, d ->
@@ -150,92 +151,76 @@ class AddTransactionActivity : AppCompatActivity() {
                 target.setText(String.format(Locale.US, "%02d:%02d", h, min))
             }, 12, 0, true).show()
         }
-        
         etStart.setOnClickListener { timeSetListener(etStart) }
         etEnd.setOnClickListener { timeSetListener(etEnd) }
     }
 
     private fun loadCategories(spinner: Spinner) {
-        lifecycleScope.launch {
-            val categories = db.categoryDao().getCategoriesForUser(userId)
-            val names = categories.map { it.name }
-            val adapter = ArrayAdapter(this@AddTransactionActivity, android.R.layout.simple_spinner_dropdown_item, names)
-            spinner.adapter = adapter
-            Log.d(TAG, "Loaded ${names.size} categories into spinner")
-        }
+        val userId = auth.currentUser?.uid ?: return
+        firestore.collection("categories").whereEqualTo("userId", userId)
+            .addSnapshotListener { documents, _ ->
+                val categoryList = documents?.mapNotNull { it.getString("name") } ?: emptyList()
+                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categoryList)
+                spinner.adapter = adapter
+            }
     }
 
-    /**
-     * Orchestrates the saving of the transaction data.
-     * Persists receipt images to internal storage to maintain app performance.
-     */
     private fun saveTransaction(etAmount: EditText, etDesc: EditText, etDate: EditText, etStart: EditText, etEnd: EditText, spinner: Spinner, rgType: RadioGroup) {
         val amount = etAmount.text.toString().toDoubleOrNull() ?: 0.0
-        val desc = etDesc.text.toString()
+        val desc = etDesc.text.toString().trim()
         val date = etDate.text.toString()
         val start = etStart.text.toString()
         val end = etEnd.text.toString()
         val categoryName = spinner.selectedItem?.toString() ?: ""
         
+        if (amount <= 0 || date.isEmpty() || categoryName.isEmpty()) {
+            Toast.makeText(this, "Amount, Date and Category are required", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val isIncome = rgType.checkedRadioButtonId == R.id.rb_income
+        val userId = auth.currentUser?.uid ?: return
 
-        if (amount > 0) {
-            lifecycleScope.launch {
-                var photoPath: String? = null
-                capturedImage?.let {
-                    Log.i(TAG, "Persisting bitmap to internal storage directory")
-                    photoPath = saveImageToInternalStorage(it)
-                }
+        var finalPhotoPath: String? = null
+        photoFile?.let { file ->
+            val permanentFile = File(filesDir, "receipt_${System.currentTimeMillis()}.jpg")
+            file.copyTo(permanentFile, true)
+            finalPhotoPath = permanentFile.absolutePath
+        }
 
-                if (isIncome) {
-                    val income = IncomeEntry(
-                        userId = userId,
-                        source = categoryName,
-                        amount = amount,
-                        date = date
-                    )
-                    db.incomeEntryDao().insertIncome(income)
-                    Log.d(TAG, "Income entry stored successfully")
-                } else {
-                    val category = db.categoryDao().getCategoriesForUser(userId).find { it.name == categoryName }
-                    val expense = ExpenseEntry(
-                        userId = userId,
-                        categoryId = category?.id ?: 0,
-                        date = date,
-                        startTime = start,
-                        endTime = end,
-                        description = desc,
-                        amount = amount,
-                        photoPath = photoPath
-                    )
-                    db.expenseEntryDao().insertExpense(expense)
-                    Log.d(TAG, "Expense entry stored successfully. Photo: ${photoPath != null}")
-                }
+        if (isIncome) {
+            val incomeMap = hashMapOf("userId" to userId, "source" to categoryName, "amount" to amount, "date" to date)
+            firestore.collection("income_entries").add(incomeMap).addOnSuccessListener {
+                Toast.makeText(this, "Income Saved", Toast.LENGTH_SHORT).show()
                 finish()
             }
         } else {
-            Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
+            firestore.collection("categories").whereEqualTo("userId", userId).whereEqualTo("name", categoryName)
+                .get().addOnSuccessListener { docs ->
+                    val categoryId = docs.documents.firstOrNull()?.id ?: ""
+                    val expenseMap = hashMapOf(
+                        "userId" to userId, "categoryId" to categoryId, "date" to date,
+                        "startTime" to start, "endTime" to end, "description" to desc,
+                        "amount" to amount, "photoPath" to finalPhotoPath
+                    )
+                    firestore.collection("expense_entries").add(expenseMap).addOnSuccessListener {
+                        Toast.makeText(this, "Expense Saved", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
         }
-    }
-
-    /**
-     * Saves captured photo to the application's private data folder.
-     * Reference: https://developer.android.com/training/data-storage/app-specific
-     */
-    private fun saveImageToInternalStorage(bitmap: Bitmap): String {
-        val filename = "receipt_${System.currentTimeMillis()}.jpg"
-        val file = File(filesDir, filename)
-        FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
-        }
-        Log.v(TAG, "Image saved at path: ${file.absolutePath}")
-        return file.absolutePath
     }
 
     private fun setupNavbar() {
-        findViewById<ImageView>(R.id.nav_dash)?.setOnClickListener { startActivity(Intent(this, MainActivity::class.java)) }
-        findViewById<ImageView>(R.id.nav_analytics)?.setOnClickListener { startActivity(Intent(this, SummaryActivity::class.java)) }
-        findViewById<ImageView>(R.id.nav_card)?.setOnClickListener { startActivity(Intent(this, TransactionsActivity::class.java)) }
-        findViewById<ImageView>(R.id.nav_settings)?.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
+        findViewById<View>(R.id.ll_nav_home)?.setOnClickListener { navigateTo(MainActivity::class.java) }
+        findViewById<View>(R.id.ll_nav_insights)?.setOnClickListener { navigateTo(SummaryActivity::class.java) }
+        findViewById<View>(R.id.ll_nav_activity)?.setOnClickListener { navigateTo(TransactionsActivity::class.java) }
+        findViewById<View>(R.id.ll_nav_profile)?.setOnClickListener { navigateTo(SettingsActivity::class.java) }
+    }
+
+    private fun navigateTo(cls: Class<*>) {
+        val intent = Intent(this, cls)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        startActivity(intent)
     }
 }

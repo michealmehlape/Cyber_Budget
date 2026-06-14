@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="15dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="#F5F5F5">
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHigh">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,10 +15,11 @@
 
         <ImageView
             android:id="@+id/menu_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/profileicon" />
+            android:src="@drawable/profileicon"
+            app:tint="@color/primary_blue" />
 
         <TextView
             android:id="@+id/menu_text"
@@ -28,7 +29,7 @@
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/menu_icon"
             android:text="Menu Item"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -38,7 +39,8 @@
             android:layout_height="20dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/greatericon" />
+            android:src="@drawable/greatericon"
+            app:tint="@color/grey_text" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

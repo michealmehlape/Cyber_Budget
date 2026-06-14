@@ -1,17 +1,16 @@
 package com.example.cyber_budget
 
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-
-@Entity(
-    tableName = "category_budgets",
-    indices = [Index(value = ["userId", "categoryId", "month"], unique = true)]
-)
+/**
+ * Model representing a budget limit for a specific category and month.
+ * Persisted in Cloud Firestore under the 'category_budgets' collection.
+ * 
+ * Updated to support minimum and maximum goals for POE requirements.
+ */
 data class CategoryBudget(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val userId: Int,
-    val categoryId: Int,
-    val month: String, // "yyyy-MM"
-    val budgetAmount: Double
+    val userId: String = "",
+    val categoryId: String = "",
+    val month: String = "", // Format: "yyyy-MM"
+    val budgetAmount: Double = 0.0,
+    val minGoal: Double = 0.0, // Minimum intended spending goal
+    val maxGoal: Double = 0.0  // Maximum intended spending goal (cap)
 )

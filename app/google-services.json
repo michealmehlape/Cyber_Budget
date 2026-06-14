@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "491076990526",
+    "project_id": "cyber-budget-292e8",
+    "storage_bucket": "cyber-budget-292e8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491076990526:android:06de3ba75b116864fb836f",
+        "android_client_info": {
+          "package_name": "com.example.cyber_budget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkBNlTNVJqmdTtjDVDPAZAALP7zgCa75U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

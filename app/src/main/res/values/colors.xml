@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Primary Brand Colors -->
+    <color name="primary_blue">#5C79E0</color>
+    <color name="primary_blue_dark">#4A65C7</color>
+
+    <!-- Accent Colors -->
+    <color name="accent_green">#4CAF50</color>
+    <color name="accent_red">#F44336</color>
+    <color name="accent_yellow">#FFEB3B</color>
+    <color name="accent_purple">#9C27B0</color>
+
+    <!-- UI Elements (Light) -->
+    <color name="window_background">#F5F7FA</color>
+    <color name="surface_color">#FFFFFF</color>
+    <color name="text_primary">#1A1C1E</color>
+    <color name="text_secondary">#666666</color>
+    <color name="grey_text">#999999</color>
+    <color name="edit_text_bg">#EDF1F7</color>
+
+    <!-- Card Backgrounds (Light) -->
+    <color name="card_income_bg">#E8F5E9</color>
+    <color name="card_expense_bg">#FFEBEE</color>
+    <color name="card_savings_bg">#E3F2FD</color>
+    <color name="card_budget_bg">#FFF8E1</color>
 </resources>

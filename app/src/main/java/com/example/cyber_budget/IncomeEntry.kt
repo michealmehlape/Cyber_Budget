@@ -1,13 +1,13 @@
 package com.example.cyber_budget
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "income_entries")
+/**
+ * Data model for Income records. 
+ * Maps directly to the 'income_entries' collection in Firestore.
+ */
 data class IncomeEntry(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val userId: Int,
-    val source: String,      // e.g., "Salary", "Freelance"
-    val amount: Double,
-    val date: String        // "yyyy-MM-dd"
+    val id: Int = 0,
+    val userId: String = "", 
+    val source: String = "", 
+    val amount: Double = 0.0,
+    val date: String = ""
 )

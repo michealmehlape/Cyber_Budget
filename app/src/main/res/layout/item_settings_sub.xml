@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="55dp"
     android:paddingHorizontal="16dp">
 
     <ImageView
@@ -9,7 +10,8 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/walleticon" />
+        android:src="@drawable/walleticon"
+        app:tint="@color/primary_blue" />
 
     <TextView
         android:id="@+id/sub_text"
@@ -19,7 +21,8 @@
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@id/sub_icon"
         android:text="Sub Item"
-        android:textColor="@color/black" />
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/sub_value"
@@ -29,7 +32,8 @@
         android:layout_marginEnd="8dp"
         android:layout_toStartOf="@id/sub_arrow"
         android:text=""
-        android:textColor="#666666" />
+        android:textColor="@color/grey_text"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/sub_arrow"
@@ -37,6 +41,7 @@
         android:layout_height="16dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/greatericon" />
+        android:src="@drawable/greatericon"
+        app:tint="@color/grey_text" />
 
 </RelativeLayout>

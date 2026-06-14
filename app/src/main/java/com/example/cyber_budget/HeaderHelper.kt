@@ -4,21 +4,31 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
+import androidx.activity.ComponentActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.DocumentSnapshot
 import java.util.*
 
+/**
+ * Shared utility to manage the consistent UI Header across all activities.
+ * Updated: Now respects the custom Budget Cycle for the notification alert badge.
+ */
 object HeaderHelper {
 
-    fun setupHeader(activity: Activity, db: AppDatabase) {
+    private var budgetListener: ListenerRegistration? = null
+    private var expenseListener: ListenerRegistration? = null
+
+    fun setupHeader(activity: Activity) {
         val sharedPreferences = activity.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val userId = sharedPreferences.getInt("userId", -1)
+        val auth = FirebaseAuth.getInstance()
+        val firestore = FirebaseFirestore.getInstance()
         
-        // Update Session Activity
+        val userId = auth.currentUser?.uid ?: return
+
+        // Update Session Activity timestamp
         sharedPreferences.edit().putLong("lastActive", System.currentTimeMillis()).apply()
 
         val profileIcon = activity.findViewById<View>(R.id.cv_profile_container)
@@ -26,55 +36,71 @@ object HeaderHelper {
         val badge = activity.findViewById<TextView>(R.id.header_notification_badge)
 
         profileIcon?.setOnClickListener {
-            activity.startActivity(Intent(activity, SettingsActivity::class.java))
+            val intent = Intent(activity, SettingsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            activity.startActivity(intent)
         }
 
         notifContainer?.setOnClickListener {
-            activity.startActivity(Intent(activity, NotificationsActivity::class.java))
+            val intent = Intent(activity, NotificationsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            activity.startActivity(intent)
         }
 
-        // Handle back buttons if they exist in the layout (as per user request)
         activity.findViewById<View>(R.id.btn_back)?.setOnClickListener {
-            activity.startActivity(Intent(activity, NotificationsActivity::class.java))
+            if (activity is ComponentActivity) activity.onBackPressedDispatcher.onBackPressed()
+            else activity.onBackPressed()
         }
 
-        if (activity is LifecycleOwner) {
-            activity.lifecycleScope.launch {
-                updateNotificationBadge(userId, db, badge)
-            }
-        }
+        val cycleDay = sharedPreferences.getInt("userBudgetCycleDay", 1)
+        startNotificationMonitoring(userId, firestore, badge, cycleDay)
     }
 
-    private suspend fun updateNotificationBadge(userId: Int, db: AppDatabase, badge: TextView?) {
-        if (badge == null || userId == -1) return
+    private fun startNotificationMonitoring(userId: String, db: FirebaseFirestore, badge: TextView?, cycleDay: Int) {
+        if (badge == null) return
+        val cycleRange = BudgetCycleHelper.getCurrentCycleRange(cycleDay)
 
-        val currentMonth = SimpleDateFormat("yyyy-MM", Locale.US).format(Date())
-        val budgets = db.categoryBudgetDao().getBudgetsForMonth(userId, currentMonth)
-        
-        var count = 0
-        // We only count actual budget alerts now. 
-        // Daily Reminder is always present in the notifications page but doesn't trigger a permanent badge.
+        var budgets = listOf<DocumentSnapshot>()
+        var expenses = listOf<DocumentSnapshot>()
 
-        for (budget in budgets) {
-            val spent = db.expenseEntryDao().getExpensesByPeriod(
-                userId, 
-                "$currentMonth-01", 
-                "$currentMonth-31"
-            ).filter { it.categoryId == budget.categoryId }.sumOf { it.amount }
+        val updateBadgeUI = {
+            var alertCount = 0
+            budgets.forEach { bDoc ->
+                val limit = (bDoc.get("maxGoal") as? Number)?.toDouble() 
+                    ?: (bDoc.get("budgetAmount") as? Number)?.toDouble() ?: 0.0
+                val catId = bDoc.getString("categoryId") ?: ""
+                
+                // Calculate spent for this category within the cycle
+                val spent = expenses.filter { it.getString("categoryId") == catId && 
+                    BudgetCycleHelper.isDateInRange(it.getString("date"), cycleRange) }
+                    .sumOf { (it.get("amount") as? Number)?.toDouble() ?: 0.0 }
+                
+                if (limit > 0 && spent >= (limit * 0.8)) alertCount++
+            }
             
-            val percentage = if (budget.budgetAmount > 0) (spent / budget.budgetAmount) * 100 else 0.0
-            
-            // Count if spent >= 80% of budget
-            if (spent > 0 && percentage >= 80) {
-                count++
+            if (alertCount > 0) {
+                badge.text = alertCount.toString()
+                badge.visibility = View.VISIBLE
+            } else {
+                badge.visibility = View.GONE
             }
         }
 
-        if (count > 0) {
-            badge.text = count.toString()
-            badge.visibility = View.VISIBLE
-        } else {
-            badge.visibility = View.GONE
-        }
+        budgetListener?.remove()
+        expenseListener?.remove()
+
+        budgetListener = db.collection("category_budgets")
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, _ ->
+                budgets = snapshot?.documents ?: emptyList()
+                updateBadgeUI()
+            }
+
+        expenseListener = db.collection("expense_entries")
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, _ ->
+                expenses = snapshot?.documents ?: emptyList()
+                updateBadgeUI()
+            }
     }
 }

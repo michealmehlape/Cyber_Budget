@@ -1,11 +1,11 @@
 package com.example.cyber_budget
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "categories")
+/**
+ * Model representing a spending category.
+ */
 data class Category(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val userId: Int,      // links to the logged-in user
-    val name: String
+    val id: String = "", // Firestore Document ID
+    val name: String,
+    val userId: String = "",
+    val color: String = "#000000" // Hex color string, default to black
 )

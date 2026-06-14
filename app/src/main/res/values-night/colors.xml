@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic Colors -->
+    <color name="white">#0B0E17</color>
+    <color name="black">#FFFFFF</color>
+
+    <!-- Primary Brand Colors -->
+    <color name="primary_blue">#5C79E0</color>
+    <color name="primary_blue_dark">#4A65C7</color>
+
+    <!-- UI Elements (Dark) -->
+    <color name="window_background">#0B0E17</color>
+    <color name="surface_color">#1A1D26</color>
+    <color name="text_primary">#E1E2E5</color>
+    <color name="text_secondary">#AAAAAA</color>
+    <color name="grey_text">#666666</color>
+    <color name="edit_text_bg">#232732</color>
+
+    <!-- Card Backgrounds (Dark Mode Overrides) -->
+    <color name="card_income_bg">#1B2E1D</color>
+    <color name="card_expense_bg">#311B1B</color>
+    <color name="card_savings_bg">#1B2531</color>
+    <color name="card_budget_bg">#312E1B</color>
+</resources>

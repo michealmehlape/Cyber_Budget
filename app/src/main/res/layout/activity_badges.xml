@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_badges"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/android:windowBackground">
+
+    <include
+        android:id="@+id/include_header"
+        layout="@layout/layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/include_nav"
+        app:layout_constraintTop_toBottomOf="@id/include_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Achievement Badges"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tap a badge to view it full size!"
+                android:textColor="@color/grey_text"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_empty_badges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:gravity="center"
+                android:text="No badges earned yet.\nKeep using the app to unlock rewards!"
+                android:textColor="@color/grey_text"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <GridLayout
+                android:id="@+id/gl_badges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:columnCount="2"
+                android:alignmentMode="alignMargins"
+                android:columnOrderPreserved="false"
+                android:useDefaultMargins="true">
+
+                <!-- Active Logger -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_badge_1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:visibility="gone"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <ImageView
+                            android:id="@+id/iv_badge_image"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:src="@drawable/activeloggerbadge"
+                            android:scaleType="centerInside"
+                            android:contentDescription="Active Logger Badge" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Active Logger"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Budget Pro -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_badge_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:visibility="gone"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <ImageView
+                            android:id="@+id/iv_badge_image_2"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:src="@drawable/budgetprobadge"
+                            android:scaleType="centerInside"
+                            android:contentDescription="Budget Pro Badge" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Budget Pro"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Finance Guru -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_badge_3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:visibility="gone"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <ImageView
+                            android:id="@+id/iv_badge_image_3"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:src="@drawable/financegurubadge"
+                            android:scaleType="centerInside"
+                            android:contentDescription="Finance Guru Badge" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Finance Guru"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Saver Hero -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_badge_4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:visibility="gone"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <ImageView
+                            android:id="@+id/iv_badge_image_4"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:src="@drawable/saverherobadge"
+                            android:scaleType="centerInside"
+                            android:contentDescription="Saver Hero Badge" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Saver Hero"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+            </GridLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/include_nav"
+        layout="@layout/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

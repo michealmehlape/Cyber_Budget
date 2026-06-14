@@ -1,9 +1,35 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Cyber_Budget" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Main Brand Colors -->
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/primary_blue_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Surface and Window Colors -->
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="colorSurface">@color/surface_color</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorSurfaceContainer">@color/edit_text_bg</item>
+        <item name="colorSurfaceContainerHigh">@color/edit_text_bg</item>
+
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/window_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Global Field Styling -->
+        <item name="editTextStyle">@style/CyberBudget.EditText</item>
     </style>
 
     <style name="Theme.Cyber_Budget" parent="Base.Theme.Cyber_Budget" />
+
+    <style name="CyberBudget.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_edittext</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">@color/grey_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

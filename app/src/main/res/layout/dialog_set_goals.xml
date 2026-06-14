@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?attr/colorSurface"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Minimum Spending Goal (R)"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/et_min_goal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_edittext"
+        android:hint="e.g. 500.00"
+        android:inputType="numberDecimal"
+        android:paddingHorizontal="16dp"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="@color/grey_text"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Maximum Spending Goal / Budget (R)"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/et_max_goal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_edittext"
+        android:hint="e.g. 2000.00"
+        android:inputType="numberDecimal"
+        android:paddingHorizontal="16dp"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="@color/grey_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Note: Max goal will be used as your hard budget limit."
+        android:textColor="@color/grey_text"
+        android:textSize="12sp"
+        android:fontStyle="italic" />
+
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.example.cyber_budget
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -10,24 +11,27 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
- * Register Activity: Handles new user registration and saves data to the Room Database.
+ * RegisterActivity: Facilitates new user account creation.
+ * Updated: Initializes achievement archive and budget cycle defaults.
  */
 class register : AppCompatActivity() {
 
-    // Database instance
-    private lateinit var db: AppDatabase
+    private val TAG = "Register_Activity"
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
         enableEdgeToEdge()
         setContentView(R.layout.activity_register)
 
-        // Initialize database
-        db = AppDatabase.getDatabase(this)
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -35,7 +39,6 @@ class register : AppCompatActivity() {
             insets
         }
 
-        // 1. Get references to the UI elements
         val etFirstName = findViewById<EditText>(R.id.et_first_name)
         val etLastName = findViewById<EditText>(R.id.et_last_name)
         val etEmail = findViewById<EditText>(R.id.et_email)
@@ -43,19 +46,9 @@ class register : AppCompatActivity() {
         val etConfirmPassword = findViewById<EditText>(R.id.et_confirm_password)
         val btnRegister = findViewById<Button>(R.id.btn_register)
         val tvLoginClick = findViewById<TextView>(R.id.tv_login_click)
-        val btnBack = findViewById<android.widget.ImageView>(R.id.btn_back)
 
-        // 2. Navigation: Back button
-        btnBack.setOnClickListener {
-            finish()
-        }
+        tvLoginClick.setOnClickListener { finish() }
 
-        // 3. Navigation: Go back to Login page
-        tvLoginClick.setOnClickListener {
-            finish() // Since we usually come from the login page, finish() takes us back
-        }
-
-        // 4. Handle Register Button Click
         btnRegister.setOnClickListener {
             val fName = etFirstName.text.toString().trim()
             val lName = etLastName.text.toString().trim()
@@ -63,9 +56,8 @@ class register : AppCompatActivity() {
             val pass = etPassword.text.toString().trim()
             val confirmPass = etConfirmPassword.text.toString().trim()
 
-            // Basic Validation
             if (fName.isEmpty() || lName.isEmpty() || email.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -74,30 +66,44 @@ class register : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Database Operation: Save new user
-            lifecycleScope.launch {
-                // Check if email already exists
-                val existingUser = db.userDao().getUserByEmail(email)
-                if (existingUser != null) {
-                    Toast.makeText(this@register, "Email already registered", Toast.LENGTH_SHORT).show()
-                } else {
-                    // Create new user object
-                    val newUser = User(
-                        firstName = fName,
-                        lastName = lName,
-                        email = email,
-                        passwordHash = pass // Note: In a real app, hash this!
-                    )
-                    
-                    // Insert into database
-                    db.userDao().insertUser(newUser)
-                    
-                    Toast.makeText(this@register, "Registration Successful!", Toast.LENGTH_SHORT).show()
-                    
-                    // Go to Login page
-                    finish()
-                }
+            if (pass.length < 6) {
+                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            Log.i(TAG, "Creating account for: $email")
+            
+            auth.createUserWithEmailAndPassword(email, pass)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
+                        
+                        // Initialize user profile with all necessary fields
+                        val userMap = hashMapOf(
+                            "firstName" to fName,
+                            "lastName" to lName,
+                            "email" to email,
+                            "biometricEnabled" to false,
+                            "budgetCycleDay" to 1,
+                            "earnedBadges" to arrayListOf<String>()
+                        )
+                        
+                        firestore.collection("users").document(userId)
+                            .set(userMap)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e(TAG, "Error saving profile", e)
+                                Toast.makeText(this, "Account created, but profile failed: ${e.message}", Toast.LENGTH_LONG).show()
+                                finish()
+                            }
+                    } else {
+                        Log.e(TAG, "Registration failed", task.exception)
+                        Toast.makeText(this, "Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
     }
 }

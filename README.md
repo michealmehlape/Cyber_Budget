@@ -1,67 +1,58 @@
- SmartBudget 
+# Smart Budget: Architectural Refactor & Technical Specification
 
-Description
-SmartBudget is a budgeting and expense tracking application designed to help users manage their finances efficiently. It allows users to track income and expenses, set financial goals, and gain insights into their spending habits.
+Smart Budget is an Android-native financial management platform. This project represents a complete architectural transition from a localized SQLite (Room) persistence layer to a distributed, cloud-synchronized infrastructure powered by **Firebase**. The system is engineered for high-availability, hardware-level security, and efficient media processing.
 
-The app is tailored for South African users, considering local economic challenges and financial systems.
+---
 
+## ✨ Core Features & POE Requirements
 
+### 1. Advanced Data Visualization (Final POE)
+*   **Dynamic Category Graph:** A high-performance `HorizontalBarChart` (via MPAndroidChart) visualizes spending across all user-defined categories.
+*   **Goal Tracking:** The app now supports **Minimum and Maximum spending goals**. Progress bars are color-coded to provide instant visual feedback:
+    *   🔵 **Blue**: Under-spending (Below Min Goal)
+    *   🟢 **Green**: Healthy (Between Min and Max Goal)
+    *   🔴 **Red**: Over-budget (Exceeded Max Goal)
 
-Features
-- User registration and secure authentication (biometrics)
-- Expense tracking and categorization
-- Budget creation and goal setting
-- Smart notifications and alerts
+### 2. Gamification & Rewards
+To encourage financial discipline, the app includes a **Badges & Rewards system**:
+*   🏆 **Active Logger**: Awarded for consistent expense tracking.
+*   🏆 **Budget Pro**: Awarded for staying within your defined goal range.
+*   🏆 **Finance Guru**: Awarded for mastering budget discipline across multiple categories.
 
- System Overview
-- Platform: Android
-- Target Users: Individuals managing personal finances
-- Focus: Financial awareness and smart budgeting
+---
 
- Key Screens
-- Home Dashboard (financial overview)
-- Expense Entry Screen
-- Budget Summary
-- Analytics Dashboard
-- Settings & Security
+## 🌟 Exclusive "Own Features"
 
+### Feature A: The SAFE ZONE (Daily Spending Intelligence)
+The dashboard now features a real-time **SAFE ZONE** calculation. 
+*   **How it works:** It takes the user's remaining monthly budget and divides it by the days left in the month.
+*   **Value:** It gives the user a specific "Daily Allowance" (e.g., *R150.00 / day*). This makes complex budgeting feel simple and manageable.
 
- Security Features
-- End-to-end encryption
-- Biometric login (fingerprint/face ID)
+### Feature B: AI Spending Insights (Smart Analysis)
+A rule-based logic engine that analyzes spending patterns over time.
+*   **How it works:** The engine compares the current week's total spending against the previous week.
+*   **Value:** It provides human-readable advice (e.g., *"Your spending is up 15% this week. Try to stick to your Safe Zone!"*), moving the app from a simple ledger to a smart financial assistant.
 
+---
 
- Development Plan
-The project follows 6 phases:
-1. Research & Planning
-2. UI/UX Design
-3. Backend Development
-4. Frontend Development
-5. Testing
-6. Deployment
+## 🏛 Technical Architecture
 
+### 1. Cloud Ingestion & Data Tenancy
+*   **Persistence:** Powered by **Cloud Firestore** for real-time synchronization.
+*   **Security:** Every transaction is isolated by Firebase `UID` and protected by server-side rules.
 
+### 2. Hardened Security Model
+*   **Biometrics:** Integration with **AndroidX Biometric** for Fingerprint/Face ID.
+*   **Session Guard:** 30-minute idle-lock enforced globally.
 
- Challenges
-- Bank integration in South Africa
-- User engagement
-- Data privacy and compliance
+---
 
+## 🛠 Engineering Stack
+*   **Logic:** Kotlin (Coroutines & Structured Concurrency)
+*   **Backend:** Firebase Auth & Firestore
+*   **Charts:** MPAndroidChart
+*   **UI:** Material Design 3 (M3)
 
+---
 
- Goal
-To empower South Africans to take control of their finances through a simple, secure, and intelligent budgeting system.
-
-
-
- Authors
-- Murendeni Nethenzheni
-- Micheal Mehlape
-- Advice Ngobene
-
-youtube link
-- https://youtu.be/DFEmtJv8Gmk?si=UsoCJOCGU7HeOURO
-  
-
-
-
+**Developed and Architected by Micheal Mehlape**

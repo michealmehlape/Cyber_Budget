@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mainbackground">
+    android:background="?attr/android:windowBackground">
 
     <include
         android:id="@+id/include_header"
@@ -19,8 +19,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:clipToPadding="false"
-        android:paddingBottom="120dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/include_nav"
         app:layout_constraintTop_toBottomOf="@id/include_header">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,51 +31,151 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Budget Summary"
-                android:textColor="#2E4B94"
+                android:layout_marginTop="24dp"
+                android:text="Budget Analysis"
+                android:textColor="?attr/colorOnBackground"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_subtitle"
-                android:layout_width="wrap_content"
+            <!-- AI Spending Insights Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_ai_insights"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Track and manage your spending"
-                android:textColor="#666666"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                app:cardBackgroundColor="#F3F0FF"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✨ Smart AI Insight"
+                        android:textColor="#673AB7"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_ai_insight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Analyzing your spending patterns..."
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:lineSpacingExtra="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Graph Section -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:layout_constraintTop_toBottomOf="@+id/cv_ai_insights">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Spending vs Goals"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/barChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginTop="16dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_rewards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:layout_constraintTop_toBottomOf="@+id/cv_graph">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Your Badges"
+                        android:textStyle="bold"
+                        android:textColor="#FF9800" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_badges"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cv_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="15dp"
-                app:layout_constraintTop_toBottomOf="@+id/tv_subtitle">
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:layout_constraintTop_toBottomOf="@+id/cv_rewards">
 
                 <LinearLayout
-                    android:id="@+id/ll_budget_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Budget Progress"
+                        android:text="Category Budget Analysis"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:textColor="#2E4B94"/>
+                        android:textColor="?attr/colorOnSurface"/>
 
-                    <!-- Budgets will be added here dynamically -->
-
+                    <LinearLayout
+                        android:id="@+id/ll_budget_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -85,18 +184,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="15dp"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
                 app:layout_constraintTop_toBottomOf="@+id/cv_progress">
 
                 <LinearLayout
-                    android:id="@+id/ll_alerts_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Budget Alerts" android:textStyle="bold" android:textColor="#FF0000"/>
-                    <!-- Alerts will be added here dynamically -->
+                    android:padding="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Budget Insights"
+                        android:textStyle="bold"
+                        android:textColor="#FF5252"/>
+
+                    <LinearLayout
+                        android:id="@+id/ll_alerts_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -105,10 +216,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#3450A1"
-                android:text="Adjust Budget"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="@color/primary_blue"
+                android:text="Adjust Budget &amp; Goals"
                 android:textAllCaps="false"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 app:cornerRadius="30dp"
                 app:layout_constraintTop_toBottomOf="@+id/cv_alerts" />
