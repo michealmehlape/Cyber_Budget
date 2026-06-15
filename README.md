@@ -1,22 +1,30 @@
-- Cyber Budget Project Overview
+- Smart Budget Overview
 - This application is a personal finance management tool used to monitor income and expenses.
 - It stores data in a cloud database to keep financial records synced across different devices.
 - The app helps users maintain a budget by providing visual feedback on spending categories and goals.
 
-- Features We Implemented
+------------------------Features We Implemented---------------------------------------------------
 - Income and expense tracking with details for amount, date, description, and category.
+- visuial graphs showing amount spent per category in a specific cycle 
 - Cloud synchronization using Firebase Firestore for real-time data persistence.
 - Interactive donut pie chart on the dashboard displaying spending by category.
 - Percentage values displayed inside the chart slices and category names outside with connecting lines.
 - Custom category management where users can set names and permanent colors.
 - Budget goal setting for each category, including minimum and maximum spending limits.
-- Visual progress bars that track budget consumption and change color based on spending status.
+- Visual progress bars that track budget minimum and maximum goals and change color based on spending status.
 - Transaction history list for reviewing and managing past entries.
 - Image attachment support for saving photos of receipts with transactions.
 - Biometric security integration for fingerprint and facial recognition access.
 - Automatic session locking after 30 minutes of user inactivity.
 - Customizable budget cycles allowing users to set specific start dates for tracking.
 - Navigation system for switching between home, insights, activity, and profile sections.
+- gamifications element awarding the user badges for meeting certain budget goals
+
+-----------------------------OWN FEATURES------------------------------------
+- Safe Zone Implementation
+- AI spending Analysis
+
+-----------------------------HOW IT WORKS------------------------------------
 
 - Safe Zone Feature
 - The Safe Zone, also displayed as Safe Today, is a daily spending intelligence tool.
@@ -46,7 +54,7 @@
 - Server-side security rules prevent unauthorized access or modification of user records.
 
 - Technical Specifications
-- Built using the Kotlin programming language and standard Android development tools.
+- Built using the Kotlin and standard Android development tools.
 - Uses Firebase Authentication and Cloud Firestore for backend services.
 - Data visualization and charts are implemented using the MPAndroidChart library.
 - The interface is built with Material Design to ensure a consistent appearance.
