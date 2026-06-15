@@ -13,6 +13,13 @@
 ![Screenshot 6](Smart%20Budget6.jpg)
 ![Screenshot 7](Smart%20Budget7.jpg)
 
+------------------------GitHub and GitHub Actions-----------------------------------
+- GitHub is used as the central repository for the project's source code, enabling version control and collaborative development.
+- GitHub Actions is utilized for Continuous Integration (CI) to automate the building and testing process.
+- The "Android CI" workflow is triggered automatically on every push and pull request to the master and main branches.
+- The workflow environment is configured with JDK 17 (Temurin distribution) and Gradle caching to optimize build times.
+- Automated build execution using `./gradlew assembleDebug` verifies that the application compiles correctly.
+- Automated unit testing via `./gradlew test` ensures that new changes do not introduce regressions in the core logic.
 
 Video Link
 https://youtu.be/ByJumJu2w3Y
@@ -85,7 +92,3 @@ https://youtu.be/ByJumJu2w3Y
 
 - Development Team
 - Developed by Micheal Mehlape, Murendeni Nethezheni, and Advice Ngobene.
-
-
-Video Link
-https://youtu.be/ByJumJu2w3Y
