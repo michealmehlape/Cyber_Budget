@@ -3,6 +3,19 @@
 - It stores data in a cloud database to keep financial records synced across different devices.
 - The app helps users maintain a budget by providing visual feedback on spending categories and goals.
 
+-------------------------------Screenshots-------------------------------------------
+
+![Screenshot 1](Smart%20Budget1.jpg)
+![Screenshot 2](Smart%20Budget2.jpg)
+![Screenshot 3](Smart%20Budget3.jpg)
+![Screenshot 4](Smart%20Budget4.jpg)
+![Screenshot 5](Smart%20Budget5.jpg)
+![Screenshot 6](Smart%20Budget6.jpg)
+![Screenshot 7](Smart%20Budget7.jpg)
+
+
+Video Link
+https://youtu.be/ByJumJu2w3Y
 ------------------------Features We Implemented---------------------------------------------------
 - Income and expense tracking with details for amount, date, description, and category.
 - Visual graphs showing amount spent per category in a specific cycle 
@@ -52,12 +65,27 @@
 - Biometric authentication is handled through the AndroidX Biometric library for secure logins.
 - Idle-lock security is enforced globally to protect sensitive financial data.
 - Server-side security rules prevent unauthorized access or modification of user records.
+----------------------------------Design Elements-----------------------------------
 
-- Technical Specifications
+- Cloud-First Design: Instead of storing everything only on the phone, the app uses a cloud database. This means if the app is deleted or a new phone is used, all categories and spending history are restored immediately.
+- The Safe Zone Tool: To avoid the stress of looking at big monthly totals, the "Safe Today" feature breaks the budget down into one single daily number. It tells the user exactly how much can be spent today to stay on track, making financial planning much simpler.
+- Dark Mode Styling: The app uses a dark theme (Dark Mode) for a "cyber" look. This is easier on the eyes during night use, helps save battery life on many screens, and makes the colorful spending graphs stand out more clearly.
+- Gamification with Badges: Tracking money can be boring, so the app uses a badge system. It rewards users with trophies for things like staying under budget or being consistent, turning financial discipline into a game.
+- Visual Traffic Light Feedback: Progress bars use a green, orange, and red system. This gives an instant warning without needing to read any numbers—red means over-budget, orange means getting close, and green means safe.
+- Data Visualization: A donut-style pie chart is used on the main screen. It shows "slices" of spending, making it easy to see at a glance if most of the money is going to food, transport, or other categories.
+- Biometric Security: Since financial data is private, the app uses fingerprint and facial recognition. This keeps the data safe from anyone else picking up the phone, while still making it quick for the owner to log in.
+- Auto-Locking: As an extra safety step, the app automatically locks itself if it hasn't been used for 30 minutes, ensuring sensitive info isn't left open by accident.
+-
+--------------------------------Technical Specifications-------------------------------
 - Built using the Kotlin and standard Android development tools.
 - Uses Firebase Authentication and Cloud Firestore for backend services.
 - Data visualization and charts are implemented using the MPAndroidChart library.
 - The interface is built with Material Design to ensure a consistent appearance.
 
+
 - Development Team
 - Developed by Micheal Mehlape, Murendeni Nethezheni, and Advice Ngobene.
+
+
+Video Link
+https://youtu.be/ByJumJu2w3Y
