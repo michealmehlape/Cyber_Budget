@@ -5,7 +5,7 @@
 
 ------------------------Features We Implemented---------------------------------------------------
 - Income and expense tracking with details for amount, date, description, and category.
-- visuial graphs showing amount spent per category in a specific cycle 
+- Visual graphs showing amount spent per category in a specific cycle 
 - Cloud synchronization using Firebase Firestore for real-time data persistence.
 - Interactive donut pie chart on the dashboard displaying spending by category.
 - Percentage values displayed inside the chart slices and category names outside with connecting lines.
